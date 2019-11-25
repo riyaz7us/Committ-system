@@ -25,8 +25,9 @@ function Countries_custom_taxonomy() {
     'labels' => $labels,
     'show_ui' => true,
     'show_admin_column' => true,
+    'show_in_rest' => true,
     'query_var' => true,
-    'rewrite' => array( 'slug' => 'Country' ),
+    'rewrite' => array( 'slug' => 'country' ),
   ));
  
 }

@@ -3,7 +3,7 @@
 
 function courses_post_type() {
 $supports = array(
-'title', 'editor', 'author', 'thumbnail', 'excerpt', 'custom-fields', 'comments', 'revisions', 'post-formats', 
+'title', 'author', 'thumbnail', 'excerpt', 'custom-fields', 'comments', 'revisions', 'post-formats', 
 );
 
 $labels = array(
@@ -19,6 +19,7 @@ $labels = array(
 'all_items' => __('All courses'),
 'search_items' => __('Search course'),
 'not_found' => __('No course found.'),
+
 );
 
 $args = array(
@@ -29,8 +30,9 @@ $args = array(
 'rewrite' => array('slug' => 'courses'),
 'has_archive' => true,
 //'hierarchical' => false,
-'taxonomies' => array('category' ),
+'taxonomies' => array('category','schools','countries' ),
 'menu_icon' => 'dashicons-welcome-learn-more',
+'show_in_rest' => true,
 );
 register_post_type('courses', $args);
 }

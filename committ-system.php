@@ -15,3 +15,8 @@ require( COMMITT_PLUGIN_DIR . '/lib/universities_taxonomies.php' );
 /*Ajax Search Filters for Courses post types*/
 require( COMMITT_PLUGIN_DIR . '/search/filter-form.php' );
 require( COMMITT_PLUGIN_DIR . '/search/filter-callback.php' );
+/*Ajax Search Filters for Universities post types*/
+require( COMMITT_PLUGIN_DIR . '/university-search/filter-form.php' );
+require( COMMITT_PLUGIN_DIR . '/university-search/filter-callback.php' );
+/*Ajax Form built for homepage for redirect towards archive*/
+require( COMMITT_PLUGIN_DIR . '/search/filter-homepage.php' );

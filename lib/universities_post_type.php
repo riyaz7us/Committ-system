@@ -30,6 +30,8 @@ $args = array(
 'has_archive' => true,
 'hierarchical' => false,
 'menu_icon' => 'dashicons-building',
+'show_in_rest' => true,
+'query_var' => true,
 );
 register_post_type('universities', $args);
 }

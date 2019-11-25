@@ -1,17 +1,17 @@
 <?php
 /**** Script for University Ajax Search ****/
 //Enqueue & localize js file created DIRECT 	MESSAGE 
-function unis_script(){
+function unisearch_script(){
 	wp_enqueue_script('university-filter', get_template_directory_uri() . '/js/university-filter.js', array('jquery'), '1.0.0', true);
 	wp_localize_script( 'university-filter', 'ajax_url', admin_url('admin-ajax.php') );
 }
 
-add_action('wp_enqueue_scripts','unis_script');
-//Ajax Callbacks (Don't have Fuckin' idea what they are)
-add_action('wp_ajax_unis','unis_callback');
-add_action('wp_ajax_nopriv_unis','unis_callback');
+add_action('wp_enqueue_scripts','unisearch_script');
+//Ajax Callbacks (At least I know now, sick of it!)
+add_action('wp_ajax_unisearch','unisearch_callback');
+add_action('wp_ajax_nopriv_unisearch','unisearch_callback');
 
-function unis_callback(){
+function unisearch_callback(){
 	//print_r($_GET); // prints get value from url 
 	//die(); //Yeah! Die Bitch!!!
 	header("content-type: application/json");
@@ -21,7 +21,7 @@ function unis_callback(){
 	$university = null;
  
 	$args=array(
-		"post_type" => "courses",
+		"post_type" => sanitize_text_field($_GET['in']),
 	);
 
 	if(isset($_GET['course_type']))
@@ -78,20 +78,23 @@ function unis_callback(){
 		'value' => $course_duration,
 		'compare' => '='
 	);*/
-	$unis_query = new WP_Query($args);
-	while ($unis_query->have_posts()){
-		$unis_query->the_post();
+	$unisearch_query = new WP_Query($args);
+	while ($unisearch_query->have_posts()){
+		$unisearch_query->the_post();
 			$result[] = array(
 			"id" => get_the_ID(),
 				"title" => get_the_title(),
+				"post_type" => get_post_type(),
+				"thumbnail" => get_the_post_thumbnail_url(),
+				"excerpt" => get_the_excerpt(),
 				"permalink" => get_the_permalink(),
+				"location" => get_field("location"),
 				"course_type" => get_field("course_type"),
-				"rel_university" => get_field("rel_university")[0]->post_title,
-				"rel_university_guid" => get_field("rel_university")[0]->guid,
 				"start_date" => get_field("start_date"),
 				"course_duration" => get_field("course_duration"),
 				"fees_in_usd" => get_field("fees_in_usd"),
 				"fees_in_inr" => get_field("fees_in_inr"),
+				"rel_university_name" => get_field("rel_university")[0]->post_title,
 			);
 	}
 	echo json_encode($result);
