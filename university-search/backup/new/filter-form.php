@@ -1,19 +1,30 @@
 <?php
 //function for university ajax search
-function courseSearch(){
-	coSearch_script();
+function universitySearch(){
+	unisearch_script();
 	ob_start();
 	?>
 
-<div id="coSearch" class="canvas">
+<div id="unisearch" class="canvas">
 	<div class="mt-2 border pl-5 pr-5 pt-2 pb-2">
 		<i class="fa fa-search"></i> Find: <a id="courses" href="/courses">courses</a> | 
 		<a id="universities" href="/universities">universities</a>
 <form id="coursesform" action="" method="get" autocomplete="off">
 		<!-- Course Type -->
 <section class="row">
-
-	<div class="col-md-4">
+	<div class="col-md-2">
+	<p class="control has-icons-left">
+		<span class="select is-fullwidth">
+			<select id="in" name="in">
+				<option value="courses" selected>Courses</option>
+			</select>
+		</span>
+		<span class="icon is-small is-left">
+      			<i class="fa fa-search"></i>
+    	</span>
+	</p>
+	</div>
+	<div class="col-md-3">
 	<p class="control has-icons-left">
 		<span class="select is-fullwidth">
 			<select id="course_type" name="course_type" placeholder="Desired level of study" >
@@ -76,14 +87,54 @@ function courseSearch(){
     	</span>
 	</p>
 	</div>
-	<div class="col-md-3">
+	<div class="col-md-1">
 	<p class="control">
-		<button type="submit" class="button is-fullwidth is-success pl-5 pr-5"><i class="fa fa-filter"></i>&nbsp;Filter</button>
+		<button type="submit" class="button is-fullwidth is-info pl-5 pr-5"><i class="fa fa-filter"></i>&nbsp;Filter</button>
 	</p>
 	</div>
 </section>
 </form>
-
+<form id="universitiesform" action="" method="get" autocomplete="off">
+		<!-- Course Type -->
+<section class="row">
+	<div class="col-md-2">
+	<p class="control has-icons-left">
+		<span class="select is-fullwidth">
+			<select id="in" name="in" placeholder="Find in" >
+				<option value="universities" selected>Universities</option>
+			</select>
+		</span>
+		<span class="icon is-small is-left">
+      			<i class="fa fa-search"></i>
+    	</span>
+	</p>
+	</div>
+	<!-- Country -->
+	<div class="col-md-3">
+	<p class="control has-icons-left">
+		<span class="select is-fullwidth">
+			<select id="country" name="country" >
+				<option value="" default>All Countries</option>
+				<option value="aus">Australia</option>
+				<option value="canada">Canada</option>
+				<option value="ireland">Ireland</option>
+				<option value="uae">U.A.E</option>
+				<option value="uk">United Kingdom</option>
+				<option value="us">United States</option>
+			</select>
+		</span>
+		<span class="icon is-small is-left">
+      		<i class="fa fa-globe"></i>
+    	</span>
+	</p>
+	</div>
+	<div class="col-md-1">
+	<p class="control">
+		<button type="submit" class="button is-fullwidth is-info pl-5 pr-5"><i class="fa fa-filter"></i>&nbsp;Filter</button>
+	</p>
+	</div>
+</section>
+</form>
 	</div>
 
 		<div id="response">
@@ -93,10 +144,10 @@ function courseSearch(){
 		</div>
 	<ul class="row container"></ul>
 
-</div><!-- coSearch -->
+</div><!-- unisearch -->
 <?php 
 return ob_get_clean();
 }
-add_shortcode('courseSearch','courseSearch');
+add_shortcode('universitySearch','universitySearch');
 
  ?>

@@ -1,27 +1,27 @@
 <?php
-/**** Script for course Ajax Search ****/
+/**** Script for University Ajax Search ****/
 //Enqueue & localize js file created DIRECT 	MESSAGE 
-function coSearch_script(){
-	wp_enqueue_script('course-filter', COMMITT_PLUGIN_DIR . '/js/course-filter.js', array('jquery'), '1.0.0', true);
-	wp_localize_script( 'course-filter', 'ajax_url', admin_url('admin-ajax.php') );
+function unisearch_script(){
+	wp_enqueue_script('university-filter', COMMITT_PLUGIN_DIR . '/js/university-filter.js', array('jquery'), '1.0.0', true);
+	wp_localize_script( 'university-filter', 'ajax_url', admin_url('admin-ajax.php') );
 }
 
-add_action('wp_enqueue_scripts','coSearch_script');
+add_action('wp_enqueue_scripts','unisearch_script');
 //Ajax Callbacks (At least I know now, sick of it!)
-add_action('wp_ajax_coSearch','coSearch_callback');
-add_action('wp_ajax_nopriv_coSearch','coSearch_callback');
+add_action('wp_ajax_unisearch','unisearch_callback');
+add_action('wp_ajax_nopriv_unisearch','unisearch_callback');
 
-function coSearch_callback(){
+function unisearch_callback(){
 	//print_r($_GET); // prints get value from url 
 	//die(); //Yeah! Die Bitch!!!
 	header("content-type: application/json");
 	$result=array();
 	$course_duration = 0;
 	$shift = null;
-	$course = null;
+	$university = null;
  
 	$args=array(
-		"post_type" => 'courses',
+		"post_type" => 'universities',
 	);
 
 	if(isset($_GET['course_type']))
@@ -70,17 +70,23 @@ function coSearch_callback(){
 		'value' => $course_duration,
 		'compare' => '='
 	);*/
-	$coSearch_query = new WP_Query($args);
-	while ($coSearch_query->have_posts()){
-		$coSearch_query->the_post();
+	$unisearch_query = new WP_Query($args);
+	while ($unisearch_query->have_posts()){
+		$unisearch_query->the_post();
 			$result[] = array(
 			"id" => get_the_ID(),
 				"title" => get_the_title(),
+				"post_type" => get_post_type(),
+				"thumbnail" => get_the_post_thumbnail_url(),
+				"excerpt" => get_the_excerpt(),
 				"permalink" => get_the_permalink(),
 				"location" => get_field("location"),
+				"ranking" => get_field("ranking"),
 				"course_type" => get_field("course_type"),
 				"start_date" => get_field("start_date"),
 				"course_duration" => get_field("course_duration"),
+				"fees" => get_field("fees"),
+				"fees_in_inr" => get_field("fees_in_inr"),
 				"rel_university_name" => get_field("rel_university")[0]->post_title,
 			);
 	}

@@ -15,9 +15,17 @@ function universitySearch(){
 <section class="row">
 	<!-- Country -->
 	<div class="col-md-6">
+		<div id="country" class="card">
+			<div class="checkbox">
+		<input type="checkbox" value="aus" id="aus"><label for="aus">Australia</label>
+			</div>
+			<div class="checkbox">
+		<input type="checkbox" class="form-check-input"  value="us" id="us"><label for="us">United States</label>
+			</div>
+		</div>
 	<p class="control has-icons-left">
 		<span class="select is-fullwidth">
-			<select id="country" name="country" >
+			<select id="none" name="country" >
 				<option value="" default>All Countries</option>
 				<option value="aus">Australia</option>
 				<option value="canada">Canada</option>

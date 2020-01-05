@@ -21,7 +21,7 @@ function unisearch_callback(){
 	$university = null;
  
 	$args=array(
-		"post_type" => sanitize_text_field($_GET['in']),
+		"post_type" => 'universities',
 	);
 
 	if(isset($_GET['course_type']))
@@ -37,10 +37,10 @@ function unisearch_callback(){
 		$country = sanitize_text_field($_GET['country']);
 		if(($_GET['country']!= null))
 			$args['tax_query'][] = array(
-				'taxonomy' => 'countries',
+				'taxonomy' => 'Countries',
 				'field' => 'slug',
 				'terms' => $country,
-				'operator' => 'LIKE',
+				'operator' => 'IN',
 			);
 
  	
@@ -48,20 +48,12 @@ function unisearch_callback(){
 		$category = sanitize_text_field($_GET['categories']);
 		if(($_GET['categories']!= null))
     		$args['tax_query'][] = array(
-    			'taxonomy' => 'categories',
+    			'taxonomy' => 'category',
     			'field' => 'slug',
     			'terms' => $category,
-    			'operator' => 'LIKE',
+    			'operator' => 'IN',
     		);
 
-	if(isset($_GET['gpa']))
-		$gpa = sanitize_text_field($_GET['gpa']);
-		if(($_GET['gpa']!= null))
-    		$args['meta_query'][] = array(
-    		'key' => 'gpa',
-    		'value' => $gpa,
-    		'compare' => '<='
-    		);
 /*	if(isset($_GET['shift']))
 		$shift = sanitize_text_field($_GET['shift']);
 		$args['meta_query'][] = array(
@@ -89,10 +81,11 @@ function unisearch_callback(){
 				"excerpt" => get_the_excerpt(),
 				"permalink" => get_the_permalink(),
 				"location" => get_field("location"),
+				"ranking" => get_field("ranking"),
 				"course_type" => get_field("course_type"),
 				"start_date" => get_field("start_date"),
 				"course_duration" => get_field("course_duration"),
-				"fees_in_usd" => get_field("fees_in_usd"),
+				"fees" => get_field("fees"),
 				"fees_in_inr" => get_field("fees_in_inr"),
 				"rel_university_name" => get_field("rel_university")[0]->post_title,
 			);

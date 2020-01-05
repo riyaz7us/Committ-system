@@ -1,21 +1,22 @@
 <?php
 //function for university ajax search
 function courseSearch(){
-	coSearch_script();
+	profilter_script();
 	ob_start();
 	?>
 
-<div id="coSearch" class="canvas">
+<div id="profilter" style="background-color:#ddd" class="canvas">
 	<div class="mt-2 border pl-5 pr-5 pt-2 pb-2">
-		<i class="fa fa-search"></i> Find: <a id="courses" href="/courses">courses</a> | 
-		<a id="universities" href="/universities">universities</a>
-<form id="coursesform" action="" method="get" autocomplete="off">
+
+<form id="searchform" action="" method="get">
 		<!-- Course Type -->
 <section class="row">
 
-	<div class="col-md-4">
+	<div class="col-md-3">
 	<p class="control has-icons-left">
 		<span class="select is-fullwidth">
+			<input type="checkbox" name="diploma" id="diploma">Diploma
+			<input type="checkbox" name="bachelor" id="bachelor">Bachelor
 			<select id="course_type" name="course_type" placeholder="Desired level of study" >
 				<option value="" >All Levels</option>
 				<option value="diploma">Diploma</option>

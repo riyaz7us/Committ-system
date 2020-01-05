@@ -1,94 +1,102 @@
 <?php
 /**** Script for University Ajax Search ****/
-//Enqueue & localize js file created DIRECT 	MESSAGE 
+//Enqueue & localize js file created DIRECT MESSAGE 
 function unisearch_script(){
-	wp_enqueue_script('university-filter', get_template_directory_uri() . '/js/university-filter.js', array('jquery'), '1.0.0', true);
-	wp_localize_script( 'university-filter', 'ajax_url', admin_url('admin-ajax.php') );
+	wp_enqueue_script('unisearch', get_template_directory_uri() . '/js/unisearch.js', array('jquery'), '1.0.0', true);
+	//wp_localize_script( 'unisearch', 'ajax_url', admin_url('admin-ajax.php') );
 }
 
 add_action('wp_enqueue_scripts','unisearch_script');
-//Ajax Callbacks (At least I know now, sick of it!)
-add_action('wp_ajax_unisearch','unisearch_callback');
-add_action('wp_ajax_nopriv_unisearch','unisearch_callback');
+/*(?P<category>[a-zA-Z0-9_\-\.]+)*/
+add_action('rest_api_init', function () {
+  register_rest_route( 'wp/v2', 'universities/',array(
+                'methods'  => 'GET',
+                'callback' => 'universitiesbycategory'
+      ));
+});
 
-function unisearch_callback(){
-	//print_r($_GET); // prints get value from url 
-	//die(); //Yeah! Die Bitch!!!
-	header("content-type: application/json");
-	$result=array();
-	$course_duration = 0;
-	$shift = null;
-	$university = null;
- 
-	$args=array(
-		"post_type" => sanitize_text_field($_GET['in']),
-	);
+function universitiesbycategory($request) {
+	/*-------------------------------------------------*/
+	/*--------------------REQUESTS--------------------*/
+	/*----------------------------------------------*/
 
-	if(isset($_GET['course_type']))
-		$course_type = sanitize_text_field($_GET['course_type']);
-		if(($_GET['course_type']!=null))
-			$args['meta_query'][] = array(
-			'key' => 'course_type',
-			'value' => $course_type,
-			'compare' => 'LIKE'
-			);
+	/* preset */
+	$location=array();
+	$subject=array();
 
- 	if(isset($_GET['country']))
-		$country = sanitize_text_field($_GET['country']);
-		if(($_GET['country']!= null))
-			$args['tax_query'][] = array(
+	/* pagination */
+	$paged = $request->get_param('paged');
+
+	/* Locations */
+	if ($request->get_param('us')=='on'){$location[]='us';}
+	if ($request->get_param('uk')=='on'){$location[]='uk';}
+	if ($request->get_param('australia')=='on'){$location[]='australia';}
+	if ($request->get_param('canada')=='on'){$location[]='canada';}
+
+	/* Category | Subject */
+	if($_GET['accounting']=='on')	{	$subject[] = 'accounting';	}
+	if($_GET['agriculture']=='on')	{	$subject[] = 'agriculture';	}
+	if($_GET['engineering']=='on')	{	$subject[] = 'engineering';	}
+	if($_GET['medicine']=='on')	{	$subject[] = 'medicine';	}
+
+	/*-------------------------------------------------*/
+	/*--------------------COURSES--------------------*/
+	/*----------------------------------------------*/
+
+
+	/* By Subjects */
+
+/*	if(isset($subject))
+		$pargs['tax_query'][] = array(
+			'taxonomy' => 'category',
+			'field' => 'slug',
+			'terms' => 'agriculture',
+			'operator' => 'IN',
+		);
+
+	$programs = get_posts($pargs);
+
+	foreach ($programs as $program){
+		$programslist[] = $program->ID;
+	}*/
+
+	/*-------------------------------------------------*/
+	/*------------------UNIVERSITIES------------------*/
+	/*----------------------------------------------*/
+
+    $args = array(
+    	'posts_per_page' => 10,
+    	'paged' => $paged,
+    	'post_type' => 'universities',
+    	's' => $request->get_param('s'),
+    );
+
+    if (isset($location) && sizeof($location)>0)
+	    $args['tax_query'][] = array(
 				'taxonomy' => 'Countries',
 				'field' => 'slug',
-				'terms' => $country,
-				'operator' => 'IN',
-			);
+				'terms' => $location,
+				'operator' => 'IN'
+				);
 
- 	
-	if(isset($_GET['categories'])  )
-		$category = sanitize_text_field($_GET['categories']);
-		if(($_GET['categories']!= null))
-    		$args['tax_query'][] = array(
-    			'taxonomy' => 'category',
-    			'field' => 'slug',
-    			'terms' => $category,
-    			'operator' => 'IN',
-    		);
 
-/*	if(isset($_GET['shift']))
-		$shift = sanitize_text_field($_GET['shift']);
-		$args['meta_query'][] = array(
-		'key' => 'shift',
-		'value' => $shift,
-		'compare' => 'LIKE'
-		);
-		*/
+    $posts = get_posts($args);
 
-	
-    /* Add more meta queries in a similar fashion
-	$args['meta_query'][] = array(
-		'key' => 'course_duration',
-		'value' => $course_duration,
-		'compare' => '='
-	);*/
-	$unisearch_query = new WP_Query($args);
-	while ($unisearch_query->have_posts()){
-		$unisearch_query->the_post();
-			$result[] = array(
-			"id" => get_the_ID(),
-				"title" => get_the_title(),
-				"post_type" => get_post_type(),
-				"thumbnail" => get_the_post_thumbnail_url(),
-				"excerpt" => get_the_excerpt(),
-				"permalink" => get_the_permalink(),
-				"location" => get_field("location"),
-				"course_type" => get_field("course_type"),
-				"start_date" => get_field("start_date"),
-				"course_duration" => get_field("course_duration"),
-				"fees_in_usd" => get_field("fees_in_usd"),
-				"fees_in_inr" => get_field("fees_in_inr"),
-				"rel_university_name" => get_field("rel_university")[0]->post_title,
-			);
+	/*-------------------------------------------------*/
+	/*--------------UNIVERSITIES RENDER--------------*/
+	/*----------------------------------------------*/
+
+    if (empty($posts)) {
+    return new WP_Error( 'empty_category', 'there is no post in this category', array('status' => 404) );
+    }
+    foreach ($posts as $key => $post) {
+			$posts[$key]->acf = get_fields($post->ID);
+			$posts[$key]->link = get_permalink($post->ID);
+			$posts[$key]->image = get_the_post_thumbnail_url($post->ID);
 	}
-	echo json_encode($result);
-	die();
-} ?>
+	return $posts;
+    $response = new WP_REST_Response($posts);
+    $response->set_status(200);
+
+    return $response;
+}

@@ -20,7 +20,7 @@ function Countries_custom_taxonomy() {
  
 // Now register the taxonomy
  
-  register_taxonomy('Countries',array('universities','courses'), array(
+  register_taxonomy('Countries',array('universities','courses','product'), array(
     'hierarchical' => true,
     'labels' => $labels,
     'show_ui' => true,
